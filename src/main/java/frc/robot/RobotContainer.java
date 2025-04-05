@@ -6,7 +6,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.ROBOT_MODE;
 import frc.robot.subsystems.Drive;
 
 public class RobotContainer {
@@ -40,7 +39,6 @@ public class RobotContainer {
         inputManager.register("controlBoard/buttonB", () -> controlBoard.AlgaeIn(), Boolean.class);
         inputManager.register("controlBoard/axisX", () -> controlBoard.ConfirmShot(), Boolean.class);
         inputManager.register("controlBoard/axisY", () -> controlBoard.ConfirmShot(), Boolean.class);
-        inputManager.register("Constants/ROBOT_MODE", () -> Constants.getRobotMode(), ROBOT_MODE.class);
     }
 
     

@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     robotContainer = new RobotContainer();
     
+  //addPeriodic is what runs the loop safely on the robot
     addPeriodic(robotContainer.drive::execute, 0.02);
 
     Epilogue.bind(this);

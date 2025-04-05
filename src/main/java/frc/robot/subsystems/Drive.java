@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -9,8 +8,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import frc.robot.Constants;
 import frc.robot.InputManager;
-import frc.robot.Constants.ROBOT_MODE;
 
 public class Drive {
 
@@ -20,6 +19,7 @@ public class Drive {
     private TalonSRX FL;
     private TalonSRX FR;
 
+//kinematics object to calculate wheel speeds
 private DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.5);
 
 private ChassisSpeeds kZero = new ChassisSpeeds();
@@ -33,7 +33,6 @@ private ChassisSpeeds kZero = new ChassisSpeeds();
     private DoubleSupplier y;
 
     // supplier for the robot mode
-    private Supplier<ROBOT_MODE> mode;
 
 
 //constructor that takes an InputManager object
@@ -42,14 +41,13 @@ private ChassisSpeeds kZero = new ChassisSpeeds();
         // suppliers that get the x and y values from the joystick when called
         x = () -> im.get("joystick/x" , Double.class);
         y = () -> im.get("joystick/y", Double.class);
-        mode = () -> im.get("Constants/ROBOT_MODE", ROBOT_MODE.class);
 
 
         // Initialize the motors
-        BL = new TalonSRX(0);
-        BR = new TalonSRX(1);
-        FL = new TalonSRX(2);
-        FR = new TalonSRX(3);
+        BL = new TalonSRX(Constants.DriveConstants.BL);
+        BR = new TalonSRX(Constants.DriveConstants.BR);
+        FL = new TalonSRX(Constants.DriveConstants.FL);
+        FR = new TalonSRX(Constants.DriveConstants.FR);
 
         motorConfig();
     }
@@ -57,7 +55,7 @@ private ChassisSpeeds kZero = new ChassisSpeeds();
 //method to configure the motors
     private void motorConfig(){
 
-        // Set the motors to follow each other
+        // Set the back motors to follow the front motors   
         BL.set(ControlMode.Follower, FL.getDeviceID());
         BR.set(ControlMode.Follower, FR.getDeviceID());
 
@@ -75,44 +73,45 @@ private ChassisSpeeds kZero = new ChassisSpeeds();
         var wheels = kinematics.toWheelSpeeds(speeds);
 
     // Set the motor speeds
-        BL.set(ControlMode.PercentOutput, wheels.leftMetersPerSecond);
-        BR.set(ControlMode.PercentOutput, wheels.rightMetersPerSecond);
         FL.set(ControlMode.PercentOutput, wheels.leftMetersPerSecond);
         FR.set(ControlMode.PercentOutput, wheels.rightMetersPerSecond);
 
     }
 
 
-// execute method that is called periodically
-    public void execute() {
-        switch (mode.get()) {
-                case TELEOP -> {
-                    // Get the x and y values from the joystick
-                    double xValue = x.getAsDouble();
-                    double yValue = y.getAsDouble();
+// Method to handle TELEOP mode
+    private void handleTeleop() {
+        // Get the x and y values from the joystick
+        double xValue = x.getAsDouble();
+        double yValue = y.getAsDouble();
 
-                    // Create a ChassisSpeeds object with the x and y values
-                    var speeds = new ChassisSpeeds(yValue, 0, xValue);
-
-                    // Call the control method with the ChassisSpeeds object
-                    control(speeds);
-                }
-                case AUTO -> {
-                    // Needs setup with some sensors
-
-                    var autoSpeeds = new ChassisSpeeds();
-
-                    // Call the control method with the auto speeds
-                    control(autoSpeeds);
-
-                }
-                case DISABLED -> {
-                    // If the robot is disabled, set the motor speeds to zero
-                    control(kZero);
-                }
-            }
-        }
-
+        // convert the joystick values to chassis speeds and plug them into the control method
+        var speeds = new ChassisSpeeds(yValue, 0, xValue);
+        control(speeds);
     }
-    
+
+// Method to handle AUTO mode
+    private void handleAuto() {
+        //TODO: Implement auto mode
+        var autoSpeeds = new ChassisSpeeds();
+        control(autoSpeeds);
+    }
+
+// Method to handle DISABLED mode
+    private void handleDisabled() {
+        // Stop the motors
+        control(kZero);
+    }
+
+    // execute method that is called periodically
+    public void execute() {
+        switch (Constants.getRobotMode()) {
+            case TELEOP -> handleTeleop();
+            case AUTO -> handleAuto();
+            case DISABLED -> handleDisabled();
+        }
+    }
+
+}
+
 
