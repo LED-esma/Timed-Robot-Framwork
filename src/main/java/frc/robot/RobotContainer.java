@@ -6,11 +6,13 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.inputs.InputManager;
 import frc.robot.subsystems.Drive;
 
 public class RobotContainer {
     
     // Input manager
+    @Logged
     private final InputManager inputManager = new InputManager();
 
     // Joystick on USB port 0
@@ -19,7 +21,6 @@ public class RobotContainer {
     //ControlBoard on USB port 1
     private final ControlBoard controlBoard = new ControlBoard(1);
     
-    @Logged
     protected Drive drive;
 
         public RobotContainer() {
@@ -37,9 +38,8 @@ public class RobotContainer {
 
         inputManager.register("controlBoard/buttonA", () -> controlBoard.AlgaeOut(), Boolean.class);
         inputManager.register("controlBoard/buttonB", () -> controlBoard.AlgaeIn(), Boolean.class);
-        inputManager.register("controlBoard/axisX", () -> controlBoard.ConfirmShot(), Boolean.class);
-        inputManager.register("controlBoard/axisY", () -> controlBoard.ConfirmShot(), Boolean.class);
-    }
+        inputManager.register("controlBoard/ConfirmShot", () -> controlBoard.ConfirmShot(), Boolean.class);
+     }
 
     
     public void updateDashboard(){

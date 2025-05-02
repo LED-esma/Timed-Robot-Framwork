@@ -9,7 +9,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.Constants;
-import frc.robot.InputManager;
+import frc.robot.inputs.InputManager;
 
 public class Drive {
 
@@ -26,10 +26,8 @@ private ChassisSpeeds kZero = new ChassisSpeeds();
 
 
 //suppliers for inputs
-    @Logged(name = "inputs/x")
     private DoubleSupplier x;
 
-    @Logged(name = "inputs/y")
     private DoubleSupplier y;
 
     // supplier for the robot mode

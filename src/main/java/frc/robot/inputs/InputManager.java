@@ -1,4 +1,5 @@
-package frc.robot;
+package frc.robot.inputs;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -48,7 +49,7 @@ public class InputManager {
     
 
     //class to store the input
-    private static class InputEntry<T> {
+    public static class InputEntry<T> {
         final Supplier<T> supplier;
         final Class<T> type;
     
@@ -58,4 +59,5 @@ public class InputManager {
         }
     }
 }
+
 
